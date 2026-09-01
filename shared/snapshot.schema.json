@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quota-pool.local/schema/snapshot-v1.json",
+  "title": "Quota Pool Snapshot",
+  "type": "object",
+  "required": ["schemaVersion", "device", "accounts", "presences", "rateLimitWindows", "resetCreditSummaries", "activity", "observedAt"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "device": { "$ref": "#/$defs/device" },
+    "accounts": { "type": "array", "items": { "$ref": "#/$defs/account" } },
+    "presences": { "type": "array", "items": { "$ref": "#/$defs/presence" } },
+    "rateLimitWindows": { "type": "array", "items": { "$ref": "#/$defs/rateLimitWindow" } },
+    "resetCreditSummaries": { "type": "array", "items": { "$ref": "#/$defs/resetCreditSummary" } },
+    "globalRateLimitResets": { "type": "array", "items": { "$ref": "#/$defs/globalReset" }, "default": [] },
+    "activity": { "type": "array", "items": { "$ref": "#/$defs/activity" } },
+    "sessionSummaries": { "type": ["array", "null"], "items": { "$ref": "#/$defs/sessionSummary" } },
+    "deviceUsageDays": { "type": ["array", "null"], "items": { "$ref": "#/$defs/deviceUsageDay" } },
+    "tiboAnnouncement": { "anyOf": [{ "$ref": "#/$defs/tiboAnnouncement" }, { "type": "null" }] },
+    "observedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "device": {
+      "type": "object",
+      "required": ["id", "name", "platform", "osVersion", "codexVersion", "onlineState", "lastSeenAt"],
+      "properties": {
+        "id": { "type": "string" }, "name": { "type": "string" },
+        "platform": { "enum": ["macOS", "windows", "linux"] },
+        "osVersion": { "type": "string" }, "codexVersion": { "type": "string" },
+        "onlineState": { "enum": ["online", "offline", "stale", "syncFailed", "authExpired"] },
+        "lastSeenAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "account": {
+      "type": "object", "required": ["id", "email", "planType"],
+      "properties": {
+        "id": { "type": "string" }, "email": { "type": "string" }, "alias": { "type": ["string", "null"] },
+        "planType": { "type": "string" }, "renewalAt": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "presence": {
+      "type": "object", "required": ["deviceId", "accountId", "isCurrent", "profileKey", "lastSeenAt"],
+      "properties": {
+        "deviceId": { "type": "string" }, "accountId": { "type": "string" }, "isCurrent": { "type": "boolean" },
+        "profileKey": { "type": "string" }, "lastSeenAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "rateLimitWindow": {
+      "type": "object", "required": ["id", "accountId", "durationMins", "usedPercent", "resetsAt", "observedAt"],
+      "properties": {
+        "id": { "type": "string" }, "accountId": { "type": "string" }, "limitId": { "type": ["string", "null"] },
+        "durationMins": { "type": "integer", "minimum": 1 }, "usedPercent": { "type": "number" },
+        "resetsAt": { "type": "string", "format": "date-time" }, "observedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "resetCredit": {
+      "type": "object", "required": ["id", "accountId", "resetType", "status", "grantedAt"],
+      "properties": {
+        "id": { "type": "string" }, "accountId": { "type": "string" }, "title": { "type": ["string", "null"] },
+        "resetType": { "type": "string" }, "status": { "type": "string" },
+        "grantedAt": { "type": "string", "format": "date-time" }, "expiresAt": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "resetCreditSummary": {
+      "type": "object", "required": ["accountId", "availableCount"],
+      "properties": {
+        "accountId": { "type": "string" }, "availableCount": { "type": "integer", "minimum": 0 },
+        "credits": { "type": ["array", "null"], "items": { "$ref": "#/$defs/resetCredit" } }
+      }
+    },
+    "globalReset": {
+      "type": "object", "required": ["id", "occurredAt", "source"],
+      "properties": {
+        "id": { "type": "string" }, "occurredAt": { "type": "string", "format": "date-time" },
+        "source": { "enum": ["official", "manual", "observed"] }, "note": { "type": ["string", "null"] }
+      }
+    },
+    "activity": {
+      "type": "object", "required": ["id", "deviceId", "type", "occurredAt", "payload"],
+      "properties": {
+        "id": { "type": "string" }, "deviceId": { "type": "string" }, "accountId": { "type": ["string", "null"] },
+        "type": { "enum": ["activeAccountChanged", "quotaChanged", "quotaRefreshed", "quotaReset", "resetAdded", "resetExpired", "deviceSynced", "deviceOffline"] },
+        "occurredAt": { "type": "string", "format": "date-time" }, "payload": { "type": "object" }
+      }
+    },
+    "sessionKey": {
+      "type": "object", "required": ["deviceId", "accountFingerprint", "threadId"],
+      "properties": { "deviceId": { "type": "string" }, "accountFingerprint": { "type": "string" }, "threadId": { "type": "string" } }
+    },
+    "sessionCapabilities": {
+      "type": "object", "required": ["readable", "resumable", "writable", "active", "steerable", "interruptible", "approvalCapable"],
+      "properties": {
+        "readable": { "type": "boolean" }, "resumable": { "type": "boolean" }, "writable": { "type": "boolean" },
+        "active": { "type": "boolean" }, "steerable": { "type": "boolean" }, "interruptible": { "type": "boolean" }, "approvalCapable": { "type": "boolean" }
+      }
+    },
+    "sessionSummary": {
+      "type": "object", "required": ["key", "title", "preview", "deviceName", "accountAlias", "planType", "runtimeState", "updatedAt", "capabilities"],
+      "properties": {
+        "key": { "$ref": "#/$defs/sessionKey" }, "title": { "type": "string" }, "preview": { "type": "string" },
+        "deviceName": { "type": "string" }, "accountAlias": { "type": "string" }, "planType": { "type": "string" },
+        "runtimeState": { "enum": ["notLoaded", "idle", "active", "systemError", "unavailable", "readOnly"] },
+        "model": { "type": ["string", "null"] }, "reasoningEffort": { "type": ["string", "null"] }, "activeTurnId": { "type": ["string", "null"] },
+        "updatedAt": { "type": "string", "format": "date-time" }, "capabilities": { "$ref": "#/$defs/sessionCapabilities" }
+      }
+    },
+    "tokenBreakdown": {
+      "type": "object", "required": ["inputTokens", "cachedInputTokens", "outputTokens", "reasoningTokens", "totalTokens"],
+      "properties": {
+        "inputTokens": { "type": "integer", "minimum": 0 }, "cachedInputTokens": { "type": "integer", "minimum": 0 },
+        "outputTokens": { "type": "integer", "minimum": 0 }, "reasoningTokens": { "type": "integer", "minimum": 0 }, "totalTokens": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "deviceUsageDay": {
+      "type": "object", "required": ["date", "deviceId", "deviceName", "tokens"],
+      "properties": { "date": { "type": "string", "format": "date-time" }, "deviceId": { "type": "string" }, "deviceName": { "type": "string" }, "tokens": { "$ref": "#/$defs/tokenBreakdown" } }
+    },
+    "tiboAnnouncement": {
+      "type": "object", "required": ["id", "observedAt", "sourceName", "summary"],
+      "properties": {
+        "id": { "type": "string" }, "observedAt": { "type": "string", "format": "date-time" }, "sourceName": { "type": "string" },
+        "summary": { "type": "string" }, "expectedResetAt": { "type": ["string", "null"], "format": "date-time" }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+title = "Quota Pool secret scanning"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "P-256 private key type declaration is code, not a credential"
+condition = "AND"
+targetRules = ["generic-api-key"]
+paths = ["^ios/CodexAccounts/Services/RelayClient\\.swift$"]
+regexTarget = "line"
+regexes = ["let privateKey: P256\\.KeyAgreement\\.PrivateKey"]

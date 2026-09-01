@@ -1,0 +1,36 @@
+{
+  "fill" : {
+    "linear-gradient" : ["display-p3:1.00000,1.00000,1.00000,1.00000", "display-p3:0.95686,0.95686,0.96863,1.00000"],
+    "orientation" : { "start" : { "x" : 0.5, "y" : 0 }, "stop" : { "x" : 0.5, "y" : 0.7 } }
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "blend-mode-specializations" : [ { "value" : "normal" }, { "appearance" : "dark", "value" : "normal" } ],
+          "fill" : { "solid" : "extended-gray:1.00000,1.00000" },
+          "glass" : true,
+          "image-name" : "Quota_Bars.svg",
+          "name" : "Quota_Bars",
+          "opacity-specializations" : [ { "value" : 1 }, { "appearance" : "dark", "value" : 1 } ],
+          "position" : { "scale" : 1, "translation-in-points" : [ -7.703125, 11.640625 ] }
+        }
+      ],
+      "shadow" : { "kind" : "neutral", "opacity" : 0.5 },
+      "translucency" : { "enabled" : true, "value" : 0.5 }
+    },
+    {
+      "blur-material" : null,
+      "layers" : [
+        { "hidden" : true, "image-name" : "AppIcon_Vector_Composite.svg", "name" : "AppIcon_Vector_Composite" },
+        { "blend-mode-specializations" : [ { "value" : "normal" }, { "appearance" : "dark", "value" : "normal" } ], "image-name" : "Round_Lighting.svg", "name" : "Round_Lighting" },
+        { "blend-mode-specializations" : [ { "value" : "hard-light" }, { "appearance" : "dark", "value" : "hard-light" } ], "fill" : "automatic", "image-name" : "Round_Base.svg", "name" : "Round_Base" },
+        { "hidden" : false, "image-name" : "Round_Mask_1024.svg", "name" : "Round_Mask_1024", "opacity-specializations" : [ { "appearance" : "dark", "value" : 0 } ] }
+      ],
+      "lighting" : "individual",
+      "shadow" : { "kind" : "neutral", "opacity" : 0.5 },
+      "translucency" : { "enabled" : true, "value" : 0.5 }
+    }
+  ],
+  "supported-platforms" : { "circles" : [ "watchOS" ], "squares" : "shared" }
+}

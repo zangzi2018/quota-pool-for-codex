@@ -1,0 +1,17 @@
+Quota Pool
+Copyright (c) 2026 zangzi2018
+
+This product is licensed under the PolyForm Noncommercial License 1.0.0.
+See LICENSE and COMMERCIAL-LICENSE.md.
+
+This is an independent, unofficial project. It is not affiliated with,
+endorsed by, sponsored by, or approved by OpenAI. OpenAI, ChatGPT, GPT,
+Codex, and related names and logos are trademarks of their respective
+owners. They are referenced only where needed to describe compatibility
+with locally installed software and documented interfaces.
+
+The local `codex` / Codex App Server executable is not included in this
+repository. Users must obtain it under its own license and terms.
+
+For security reports, follow SECURITY.md. Never put secrets, tokens,
+private keys, conversation contents, or personal data in a public issue.

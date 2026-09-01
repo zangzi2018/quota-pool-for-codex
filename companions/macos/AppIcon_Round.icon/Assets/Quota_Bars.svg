@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1024 1024"
+     role="img"
+     aria-labelledby="title desc">
+  <title id="title">Quota bars</title>
+  <desc id="desc">Three independent white rounded capsules, aligned at the left and shortening from top to bottom.</desc>
+  <g id="quota-bars">
+    <rect x="328" y="364" width="360" height="68" rx="34" ry="34" fill="#FFFFFF"/>
+    <rect x="328" y="478" width="286" height="68" rx="34" ry="34" fill="#FFFFFF"/>
+    <rect x="328" y="592" width="212" height="68" rx="34" ry="34" fill="#FFFFFF"/>
+  </g>
+</svg>

@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security policy
+    url: https://github.com/zangzi2018/quota-pool-for-codex/security/policy
+    about: Follow the private-reporting guidance. Never post secrets, tokens, conversations, or personal data in a public issue.

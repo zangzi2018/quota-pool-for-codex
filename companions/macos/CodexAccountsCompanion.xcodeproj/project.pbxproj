@@ -1,0 +1,360 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0DDEAFC243CAEF5FB4FD7676 /* V11Logic.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD6A007CEE6B48CF484B58FA /* V11Logic.swift */; };
+		14B1980383793D7465216FC1 /* AppIcon_Round.icon in Resources */ = {isa = PBXBuildFile; fileRef = 4861E725F178DD078EEF8F27 /* AppIcon_Round.icon */; };
+		435FC733B5217DCFDAE90CBB /* RelayURLPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58B97C31F9FB7541DBB57492 /* RelayURLPolicy.swift */; };
+		4C91B0B27722BB449039D713 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = B054A21D6177E1520B33F0D9 /* App.swift */; };
+		69E656F3CC1AB852755B9EEF /* DesktopRelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A9C4EFEEE28C6D3598CD13B /* DesktopRelay.swift */; };
+		8ED2A80F34A6E3E81455478B /* RemoteSessionRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8015816FF03E77B9DC710BAF /* RemoteSessionRuntime.swift */; };
+		90E76B15E00A506DF49CC1DD /* CompanionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A7F95CA956AB6484FAB327 /* CompanionModel.swift */; };
+		9F793715D29AED37921BFBD5 /* DefaultAccountNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = D635962569FA13D5F778D3C3 /* DefaultAccountNames.swift */; };
+		AC1EBC6011C107D2DF0E3695 /* CompanionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9539DF8CF7274D386C10DABB /* CompanionView.swift */; };
+		CCAA169B6DE4E7408DF75C7F /* QuotaLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347B8AEF06CCD29FBDC28440 /* QuotaLogic.swift */; };
+		D068E8C922CDF248AD052EB9 /* RemoteModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D9E5CB4BA52B80AED83980 /* RemoteModels.swift */; };
+		DE51DBB3F1592FD9F80D5DBD /* SnapshotDiff.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACD7D48FCCE76FB304241047 /* SnapshotDiff.swift */; };
+		F6407A6DC77EFC6B9015CEBC /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFE93789D703A7DD68E2687 /* Models.swift */; };
+		FE13EEE1ECD1D06781981988 /* AppServerClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BF24EE38339C42AAC5CFA17 /* AppServerClient.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		347B8AEF06CCD29FBDC28440 /* QuotaLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotaLogic.swift; sourceTree = "<group>"; };
+		457FECE61B1D77AED4633046 /* CodexAccountsCompanion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodexAccountsCompanion.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4861E725F178DD078EEF8F27 /* AppIcon_Round.icon */ = {isa = PBXFileReference; lastKnownFileType = wrapper.icon; path = AppIcon_Round.icon; sourceTree = "<group>"; };
+		4BF24EE38339C42AAC5CFA17 /* AppServerClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppServerClient.swift; sourceTree = "<group>"; };
+		58B97C31F9FB7541DBB57492 /* RelayURLPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelayURLPolicy.swift; sourceTree = "<group>"; };
+		5A9C4EFEEE28C6D3598CD13B /* DesktopRelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesktopRelay.swift; sourceTree = "<group>"; };
+		79D9E5CB4BA52B80AED83980 /* RemoteModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteModels.swift; sourceTree = "<group>"; };
+		8015816FF03E77B9DC710BAF /* RemoteSessionRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteSessionRuntime.swift; sourceTree = "<group>"; };
+		9539DF8CF7274D386C10DABB /* CompanionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanionView.swift; sourceTree = "<group>"; };
+		9A62634CC2A1C9F2B9C19CDA /* CodexAccountsCompanion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CodexAccountsCompanion.entitlements; sourceTree = "<group>"; };
+		ACD7D48FCCE76FB304241047 /* SnapshotDiff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotDiff.swift; sourceTree = "<group>"; };
+		B054A21D6177E1520B33F0D9 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
+		CBFE93789D703A7DD68E2687 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		D635962569FA13D5F778D3C3 /* DefaultAccountNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAccountNames.swift; sourceTree = "<group>"; };
+		D7A7F95CA956AB6484FAB327 /* CompanionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanionModel.swift; sourceTree = "<group>"; };
+		FD6A007CEE6B48CF484B58FA /* V11Logic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = V11Logic.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		10F00AC075DD51263C3ECB32 /* CodexAccountsCompanion */ = {
+			isa = PBXGroup;
+			children = (
+				B054A21D6177E1520B33F0D9 /* App.swift */,
+				4BF24EE38339C42AAC5CFA17 /* AppServerClient.swift */,
+				9A62634CC2A1C9F2B9C19CDA /* CodexAccountsCompanion.entitlements */,
+				D7A7F95CA956AB6484FAB327 /* CompanionModel.swift */,
+				9539DF8CF7274D386C10DABB /* CompanionView.swift */,
+				5A9C4EFEEE28C6D3598CD13B /* DesktopRelay.swift */,
+				8015816FF03E77B9DC710BAF /* RemoteSessionRuntime.swift */,
+				ACD7D48FCCE76FB304241047 /* SnapshotDiff.swift */,
+			);
+			path = CodexAccountsCompanion;
+			sourceTree = "<group>";
+		};
+		38CD8830C5F4B1D6C7698A9E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				457FECE61B1D77AED4633046 /* CodexAccountsCompanion.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		411EE1623569E81EBC468E07 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D635962569FA13D5F778D3C3 /* DefaultAccountNames.swift */,
+				CBFE93789D703A7DD68E2687 /* Models.swift */,
+				347B8AEF06CCD29FBDC28440 /* QuotaLogic.swift */,
+				58B97C31F9FB7541DBB57492 /* RelayURLPolicy.swift */,
+				79D9E5CB4BA52B80AED83980 /* RemoteModels.swift */,
+				FD6A007CEE6B48CF484B58FA /* V11Logic.swift */,
+			);
+			name = Models;
+			path = ../../ios/CodexAccounts/Models;
+			sourceTree = "<group>";
+		};
+		AD0E9A47A29DE76173671667 = {
+			isa = PBXGroup;
+			children = (
+				4861E725F178DD078EEF8F27 /* AppIcon_Round.icon */,
+				10F00AC075DD51263C3ECB32 /* CodexAccountsCompanion */,
+				411EE1623569E81EBC468E07 /* Models */,
+				38CD8830C5F4B1D6C7698A9E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6493DD168EB75FA43F333B3C /* CodexAccountsCompanion */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 656752579121E88D9F8C2AC1 /* Build configuration list for PBXNativeTarget "CodexAccountsCompanion" */;
+			buildPhases = (
+				9D1916F05ACEDF4616E68F9E /* Sources */,
+				31B33466F39E8E70BADCA6B7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CodexAccountsCompanion;
+			packageProductDependencies = (
+			);
+			productName = CodexAccountsCompanion;
+			productReference = 457FECE61B1D77AED4633046 /* CodexAccountsCompanion.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C46422E1C0A8F241068B2F96 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = C7FB7A7683BB2D67BE457DDB /* Build configuration list for PBXProject "CodexAccountsCompanion" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = AD0E9A47A29DE76173671667;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 38CD8830C5F4B1D6C7698A9E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6493DD168EB75FA43F333B3C /* CodexAccountsCompanion */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		31B33466F39E8E70BADCA6B7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14B1980383793D7465216FC1 /* AppIcon_Round.icon in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9D1916F05ACEDF4616E68F9E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C91B0B27722BB449039D713 /* App.swift in Sources */,
+				FE13EEE1ECD1D06781981988 /* AppServerClient.swift in Sources */,
+				90E76B15E00A506DF49CC1DD /* CompanionModel.swift in Sources */,
+				AC1EBC6011C107D2DF0E3695 /* CompanionView.swift in Sources */,
+				9F793715D29AED37921BFBD5 /* DefaultAccountNames.swift in Sources */,
+				69E656F3CC1AB852755B9EEF /* DesktopRelay.swift in Sources */,
+				F6407A6DC77EFC6B9015CEBC /* Models.swift in Sources */,
+				CCAA169B6DE4E7408DF75C7F /* QuotaLogic.swift in Sources */,
+				435FC733B5217DCFDAE90CBB /* RelayURLPolicy.swift in Sources */,
+				D068E8C922CDF248AD052EB9 /* RemoteModels.swift in Sources */,
+				8ED2A80F34A6E3E81455478B /* RemoteSessionRuntime.swift in Sources */,
+				DE51DBB3F1592FD9F80D5DBD /* SnapshotDiff.swift in Sources */,
+				0DDEAFC243CAEF5FB4FD7676 /* V11Logic.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1871D3B424A9C1CBC4151636 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Round;
+				CODE_SIGN_ENTITLEMENTS = CodexAccountsCompanion/CodexAccountsCompanion.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Quota Pool Companion";
+				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsLocalNetworking = YES;
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Used to connect to a local or LAN relay";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.codexaccounts.companion;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		78512125C2DB74ADA7F92FE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		BF6BB9FBEE0A1B0B701E19A2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon_Round;
+				CODE_SIGN_ENTITLEMENTS = CodexAccountsCompanion/CodexAccountsCompanion.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Quota Pool Companion";
+				INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsLocalNetworking = YES;
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Used to connect to a local or LAN relay";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.codexaccounts.companion;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		DE7512A158B9245CAF700014 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		656752579121E88D9F8C2AC1 /* Build configuration list for PBXNativeTarget "CodexAccountsCompanion" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1871D3B424A9C1CBC4151636 /* Debug */,
+				BF6BB9FBEE0A1B0B701E19A2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C7FB7A7683BB2D67BE457DDB /* Build configuration list for PBXProject "CodexAccountsCompanion" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DE7512A158B9245CAF700014 /* Debug */,
+				78512125C2DB74ADA7F92FE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C46422E1C0A8F241068B2F96 /* Project object */;
+}

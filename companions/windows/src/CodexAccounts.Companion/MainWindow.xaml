@@ -1,0 +1,54 @@
+<Window x:Class="CodexAccounts.Companion.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Quota Pool Companion" Width="900" Height="650" MinWidth="760" MinHeight="560" WindowStartupLocation="CenterScreen">
+  <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+    <TabControl Margin="20">
+      <TabItem Header="Overview">
+        <StackPanel Margin="28" MaxWidth="680" HorizontalAlignment="Left">
+          <TextBlock Text="Overview" FontSize="32" FontWeight="Bold" Margin="0,0,0,22"/>
+          <Border Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" CornerRadius="16" Padding="20">
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+              <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+              <TextBlock Text="Devices"/><TextBlock Grid.Column="1" Text="{Binding DeviceName}" FontWeight="SemiBold"/>
+              <TextBlock Grid.Row="1" Text="iPhone" Margin="0,12,0,0"/><TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding PairingState}" Margin="0,12,0,0"/>
+              <TextBlock Grid.Row="2" Text="Status" Margin="0,12,0,0"/><TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Status}" Margin="0,12,0,0"/>
+            </Grid>
+          </Border>
+          <StackPanel Orientation="Horizontal" Margin="0,18,0,0"><Button Content="Sync now" Click="Sync_Click" Background="{StaticResource AccentBrush}" Foreground="White"/><Button Content="Record a confirmed global rate-limit reset" Click="RecordReset_Click" Margin="8,4"/><ProgressBar Width="120" Height="6" Margin="14,0" IsIndeterminate="True" Visibility="{Binding IsWorking, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"/></StackPanel>
+          <TextBlock Text="OpenAI credentials stay on this computer. Only an end-to-end encrypted snapshot is uploaded." Foreground="Gray" TextWrapping="Wrap" Margin="0,20,0,0"/>
+        </StackPanel>
+      </TabItem>
+      <TabItem Header="Local accounts">
+        <Grid Margin="28">
+          <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+          <StackPanel><TextBlock Text="Local accounts" FontSize="32" FontWeight="Bold"/><TextBlock Text="Each row is one local Codex login. CODEX_HOME may be empty." Foreground="Gray" Margin="0,8,0,16"/></StackPanel>
+          <DataGrid Grid.Row="1" ItemsSource="{Binding Profiles}" AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single" x:Name="ProfilesGrid">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="Alias" Binding="{Binding Alias, UpdateSourceTrigger=PropertyChanged}" Width="150"/>
+              <DataGridTextColumn Header="CODEX_HOME" Binding="{Binding CodexHome, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+              <DataGridTextColumn Header="Codex CLI" Binding="{Binding CodexBinary, UpdateSourceTrigger=PropertyChanged}" Width="180"/>
+              <DataGridCheckBoxColumn Header="Current" Binding="{Binding IsCurrent}" Width="90"/>
+            </DataGrid.Columns>
+          </DataGrid>
+          <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,12,0,0"><Button Content="Add account" Click="AddProfile_Click"/><Button Content="Delete selected" Click="RemoveProfile_Click" Margin="8,4"/><Button Content="Save" Click="Save_Click" Background="{StaticResource AccentBrush}" Foreground="White" Margin="8,4"/></StackPanel>
+        </Grid>
+      </TabItem>
+      <TabItem Header="Connect iPhone">
+        <StackPanel Margin="28" MaxWidth="680" HorizontalAlignment="Left">
+          <TextBlock Text="Connect iPhone" FontSize="32" FontWeight="Bold"/>
+          <TextBlock Text="Generate a 6-digit code on iPhone and enter it within 5 minutes." Foreground="Gray" Margin="0,8,0,18"/>
+          <TextBox Text="{Binding PairingCode, UpdateSourceTrigger=PropertyChanged}" FontSize="32" FontWeight="Bold" Width="250" HorizontalAlignment="Left" MaxLength="7"/>
+          <TextBlock Text="{Binding PairingFingerprint}" FontFamily="Consolas" FontWeight="SemiBold" Margin="0,12,0,0"/>
+          <Button Content="Connect and wait for confirmation" Click="Pair_Click" Background="{StaticResource AccentBrush}" Foreground="White" HorizontalAlignment="Left" Margin="0,14,0,0"/>
+          <Border Background="#183957F2" CornerRadius="14" Padding="16" Margin="0,22,0,0"><TextBlock Text="Reads the local Codex App Server only. OpenAI credentials and conversations are not uploaded; snapshots are encrypted before upload." TextWrapping="Wrap"/></Border>
+        </StackPanel>
+      </TabItem>
+      <TabItem Header="Settings">
+        <StackPanel Margin="28" MaxWidth="680" HorizontalAlignment="Left">
+          <TextBlock Text="Sync settings" FontSize="32" FontWeight="Bold"/>
+          <TextBlock Text="Relay URL" Margin="0,18,0,6"/><TextBox Text="{Binding RelayUrl, UpdateSourceTrigger=PropertyChanged}" Width="500" HorizontalAlignment="Left"/>
+          <Button Content="Save" Click="Save_Click" Background="{StaticResource AccentBrush}" Foreground="White" HorizontalAlignment="Left" Margin="0,14,0,0"/>
+        </StackPanel>
+      </TabItem>
+    </TabControl>
+  </Grid>
+</Window>

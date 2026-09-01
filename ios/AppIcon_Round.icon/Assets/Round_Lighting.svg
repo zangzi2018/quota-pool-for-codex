@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">Round restrained lighting</title>
+  <desc id="desc">Subtle light variation clipped to a circular icon field.</desc>
+  <defs>
+    <radialGradient id="coolHighlight" gradientUnits="userSpaceOnUse" cx="236" cy="174" r="372"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".24"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
+    <radialGradient id="softLavender" gradientUnits="userSpaceOnUse" cx="712" cy="426" r="532"><stop offset="0" stop-color="#E9DEFF" stop-opacity=".20"/><stop offset="1" stop-color="#E9DEFF" stop-opacity="0"/></radialGradient>
+    <clipPath id="roundClip"><circle cx="512" cy="512" r="402"/></clipPath>
+  </defs>
+  <g clip-path="url(#roundClip)"><circle cx="236" cy="174" r="372" fill="url(#coolHighlight)"/><circle cx="712" cy="426" r="532" fill="url(#softLavender)"/></g>
+</svg>

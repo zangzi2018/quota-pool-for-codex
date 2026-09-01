@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-labelledby="title desc">
+  <title id="title">Round quota icon</title>
+  <desc id="desc">A cobalt circular field with three white quota bars.</desc>
+  <defs>
+    <radialGradient id="baseField" gradientUnits="userSpaceOnUse" cx="330" cy="260" r="760"><stop offset="0" stop-color="#A5F0FF"/><stop offset=".34" stop-color="#6CCAF4"/><stop offset=".68" stop-color="#526DE0"/><stop offset="1" stop-color="#27399F"/></radialGradient>
+    <radialGradient id="violetGlow" gradientUnits="userSpaceOnUse" cx="820" cy="780" r="560"><stop offset="0" stop-color="#C28FF2" stop-opacity=".48"/><stop offset="1" stop-color="#C28FF2" stop-opacity="0"/></radialGradient>
+    <radialGradient id="coolGlow" gradientUnits="userSpaceOnUse" cx="190" cy="190" r="420"><stop offset="0" stop-color="#E0FBFF" stop-opacity=".30"/><stop offset="1" stop-color="#E0FBFF" stop-opacity="0"/></radialGradient>
+    <clipPath id="roundClip"><circle cx="512" cy="512" r="402"/></clipPath>
+  </defs>
+  <rect width="1024" height="1024" fill="#F4F6FF"/>
+  <circle cx="512" cy="512" r="402" fill="url(#baseField)"/>
+  <g clip-path="url(#roundClip)"><circle cx="820" cy="780" r="560" fill="url(#violetGlow)"/><circle cx="190" cy="190" r="420" fill="url(#coolGlow)"/></g>
+  <g fill="#FFFFFF"><rect x="328" y="364" width="360" height="68" rx="34"/><rect x="328" y="478" width="286" height="68" rx="34"/><rect x="328" y="592" width="212" height="68" rx="34"/></g>
+</svg>

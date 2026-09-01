@@ -1,0 +1,26 @@
+name: CodexAccountsCompanion
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    macOS: "26.0"
+settings:
+  base: { SWIFT_VERSION: 5.0 }
+targets:
+  CodexAccountsCompanion:
+    type: application
+    platform: macOS
+    sources:
+      - CodexAccountsCompanion
+      - ../../ios/CodexAccounts/Models
+      - path: AppIcon_Round.icon
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.codexaccounts.companion
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Quota Pool Companion
+        INFOPLIST_KEY_NSLocalNetworkUsageDescription: Used to connect to a local or LAN relay
+        INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsLocalNetworking: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon_Round
+        CODE_SIGN_ENTITLEMENTS: CodexAccountsCompanion/CodexAccountsCompanion.entitlements
+    scheme: {}
