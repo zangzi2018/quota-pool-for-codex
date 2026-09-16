@@ -2,7 +2,7 @@
 
 A personal, self-hosted console for monitoring Codex account state, quota windows, token usage, reset activity, and remote sessions across paired Mac and Windows hosts.
 
-> **License:** This project is licensed under PolyForm Noncommercial 1.0.0 and is for noncommercial use only. This is a source-available release, not an OSI-approved open-source license. Commercial use, paid distribution, commercial internal deployment, or use of a modified version in a commercial product or service requires a written license. See [LICENSE](LICENSE), [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md), and [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
+> **License:** Quota Pool is open-source software licensed under the GNU Affero General Public License v3.0 (`AGPL-3.0-only`). Commercial use is permitted under the AGPL when its terms are followed. Organizations that need proprietary terms incompatible with the AGPL may request a separate commercial license. See [LICENSE](LICENSE), [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md), and [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md).
 
 > **Independent project notice:** This project is not affiliated with, endorsed by, sponsored by, or approved by OpenAI. OpenAI, ChatGPT, GPT, Codex, and related marks belong to their respective owners and are referenced only to describe compatibility. Use of Codex through this software remains subject to OpenAI's then-current terms, service terms, usage policies, and usage limits.
 >
