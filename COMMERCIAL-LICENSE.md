@@ -1,11 +1,11 @@
-# Commercial license
+# Commercial licensing
 
-The original project materials are released under the [PolyForm Noncommercial License 1.0.0](LICENSE). The public license does not grant commercial use.
+Quota Pool is open-source software licensed under the GNU Affero General Public License v3.0 (`AGPL-3.0-only`). The AGPL permits commercial use, modification, distribution, and private use, subject to its terms.
 
-If you want to use this project or a derivative in a commercial product, commercial service, paid distribution, commercial internal operations, SaaS or hosted service, paid app-store listing, or any other commercially beneficial setting, obtain a separate written commercial license from the copyright holder first. Changing the source, renaming the product, or replacing the license notice does not remove that requirement.
+You do **not** need a separate commercial license merely because your use is commercial if you can comply with the AGPL.
 
-For commercial licensing, contact the repository owner through GitHub.
+If your intended use requires terms that are incompatible with the AGPL—for example, distributing a proprietary modified version or operating a modified network service without providing the corresponding source in the manner required by the AGPL—you may request a separate written commercial license from the copyright holder.
 
-This file grants no extra rights and does not replace `LICENSE`. Do not use the project commercially until you have written authorization.
+For commercial licensing inquiries, contact the repository owner through GitHub.
 
-Third-party components, Apple and Windows SDKs, external services, trademarks, and other material that is not original to this project are not relicensed here. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Accessing OpenAI / Codex through this software remains subject to OpenAI's then-current terms.
+This file does not narrow, replace, or revoke rights already granted under [LICENSE](LICENSE). Third-party components, Apple and Windows SDKs, external services, trademarks, and other material that is not original to this project are not relicensed here. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Accessing OpenAI / Codex through this software remains subject to OpenAI's then-current terms.
