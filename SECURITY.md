@@ -29,9 +29,10 @@ Snapshots, remote commands, and remote-session events that leave a host must be 
 
 - Bind the reference relay to loopback unless TLS is terminated in front.
 - Set `RELAY_ORIGIN` on non-local deployments.
-- Do not expose `/v1/devices/:id/recover` through an untrusted public reverse proxy.
+- When `RELAY_BEHIND_PROXY=1`, do not publish the relay port. Only the TLS proxy should be able to reach the process. Direct cleartext access to a proxy backend is rejected.
+- `/v1/devices/:id/recover` is loopback-only, ignores forwarded headers, and is disabled behind a proxy. Public relays should persist state with `RELAY_STATE_PATH` instead of exposing recovery.
 - Rotate pairing after a suspected pairing-code or device-token leak; six-digit codes are short-lived locators, not passwords.
-- Clients refuse public `http://` relay URLs. LAN HTTP is allowed only for loopback, RFC1918, link-local, and `.local` hosts.
+- Clients refuse public `http://` relay URLs. LAN HTTP is allowed only for loopback, RFC1918, unique-local IPv6, link-local, and `.local` hosts. A spoofed `Host: 127.0.0.1` header does not make a public bind trusted.
 - Pairing status and confirm require `X-Pairing-Auth` or `X-Desktop-Proof`. The six-digit lookup must not return `deviceToken`.
 - Keep Codex, the operating system, dependencies, and this project updated.
 - Keep the automated secret-scanning workflow enabled on public branches and pull requests.
@@ -42,3 +43,4 @@ Snapshots, remote commands, and remote-session events that leave a host must be 
 - Account email addresses and session metadata exist in plaintext on paired endpoints after decryption because the UI needs to display them.
 - Public deployments still require transport encryption. Use `TLS_CERT_PATH` / `TLS_KEY_PATH` or terminate HTTPS/WSS at a trusted reverse proxy.
 - LAN HTTP remains available for trusted local networks. A local network attacker may observe transport metadata or device tokens if the LAN itself is hostile; snapshot and Remote Session bodies remain end-to-end encrypted.
+- `RELAY_BEHIND_PROXY=1` trusts `X-Forwarded-Proto` from the immediate peer. If the backend port is reachable from the internet, an attacker can spoof that header. Bind the relay to loopback or firewall it so only the proxy can connect.

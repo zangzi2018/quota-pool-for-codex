@@ -1,3 +1,4 @@
+import Darwin
 import Foundation
 
 enum RelayURLPolicyError: LocalizedError, Equatable {
@@ -58,15 +59,21 @@ enum RelayURLPolicy {
     }
 
     private static func isPrivateOrLoopbackIPv6(_ host: String) -> Bool {
-        guard host.contains(":") else { return false }
-        if host == "::1" || host == "0:0:0:0:0:0:0:1" { return true }
-        if host.hasPrefix("fe80:") { return true }
-        if host.hasPrefix("fc") || host.hasPrefix("fd") { return true }
-        if host.hasPrefix("::ffff:") {
-            let mapped = String(host.dropFirst(7))
-            if let ipv4 = ipv4Octets(mapped) { return isPrivateOrLoopbackIPv4(ipv4) }
+        guard host.contains(":"), let bytes = ipv6Bytes(host), bytes.count == 16 else { return false }
+        if bytes.dropLast().allSatisfy({ $0 == 0 }) && bytes[15] == 1 { return true }
+        if bytes[0] == 0xfe && (bytes[1] & 0xc0) == 0x80 { return true }
+        if (bytes[0] & 0xfe) == 0xfc { return true }
+        if bytes[0...9].allSatisfy({ $0 == 0 }) && bytes[10] == 0xff && bytes[11] == 0xff {
+            return isPrivateOrLoopbackIPv4([Int(bytes[12]), Int(bytes[13]), Int(bytes[14]), Int(bytes[15])])
         }
         return false
+    }
+
+    private static func ipv6Bytes(_ host: String) -> [UInt8]? {
+        var addr = in6_addr()
+        let ok = host.withCString { inet_pton(AF_INET6, $0, &addr) } == 1
+        guard ok else { return nil }
+        return withUnsafeBytes(of: addr) { Array($0.prefix(16)) }
     }
 }
 

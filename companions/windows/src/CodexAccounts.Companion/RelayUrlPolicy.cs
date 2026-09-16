@@ -27,6 +27,7 @@ public static class RelayUrlPolicy
         if (hostname is "localhost" or "localhost.localdomain") return true;
         if (hostname.EndsWith(".localhost", StringComparison.Ordinal) || hostname.EndsWith(".local", StringComparison.Ordinal)) return true;
         if (!IPAddress.TryParse(hostname, out var address)) return false;
+        if (address.IsIPv4MappedToIPv6) address = address.MapToIPv4();
         if (IPAddress.IsLoopback(address)) return true;
         if (address.AddressFamily == AddressFamily.InterNetwork)
         {

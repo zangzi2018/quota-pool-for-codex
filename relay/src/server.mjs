@@ -1,7 +1,7 @@
 import http from "node:http";
 import https from "node:https";
 import fs from "node:fs";
-import { isIP } from "node:net";
+import { BlockList, isIP } from "node:net";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import { RelayStore } from "./store.mjs";
@@ -19,23 +19,52 @@ class ClientError extends Error {
 export const store = new RelayStore({ persistencePath: process.env.RELAY_STATE_PATH });
 const sockets = { companion: new Map(), controller: new Map() };
 const rateBuckets = new Map();
+const RATE_MAX_WINDOW_MS = 10 * 60_000;
+const SAFE_ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
+
+const lanNets = new BlockList();
+lanNets.addAddress("::1", "ipv6");
+lanNets.addSubnet("127.0.0.0", 8, "ipv4");
+lanNets.addSubnet("10.0.0.0", 8, "ipv4");
+lanNets.addSubnet("172.16.0.0", 12, "ipv4");
+lanNets.addSubnet("192.168.0.0", 16, "ipv4");
+lanNets.addSubnet("169.254.0.0", 16, "ipv4");
+lanNets.addSubnet("fc00::", 7, "ipv6");
+lanNets.addSubnet("fe80::", 10, "ipv6");
+
+const loopbackNets = new BlockList();
+loopbackNets.addSubnet("127.0.0.0", 8, "ipv4");
+loopbackNets.addAddress("::1", "ipv6");
 
 export const parseHostHeader = value => {
   if (!value) return "";
-  if (value.startsWith("[")) {
-    const end = value.indexOf("]");
-    return end >= 0 ? value.slice(1, end).toLowerCase() : "";
+  const raw = String(value).trim().toLowerCase();
+  if (raw.startsWith("[")) {
+    const end = raw.indexOf("]");
+    return end >= 0 ? raw.slice(1, end) : "";
   }
-  return String(value).split(":")[0].toLowerCase();
+  if (isIP(raw)) return raw;
+  const colon = raw.lastIndexOf(":");
+  if (colon === -1) return raw;
+  const port = raw.slice(colon + 1);
+  if (!/^\d+$/.test(port)) return raw;
+  return raw.slice(0, colon);
 };
 
-const isPrivateOrLoopbackIPv4 = octets => {
-  if (octets[0] === 127) return true;
-  if (octets[0] === 10) return true;
-  if (octets[0] === 192 && octets[1] === 168) return true;
-  if (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) return true;
-  if (octets[0] === 169 && octets[1] === 254) return true;
-  return false;
+const ipFamily = hostname => {
+  const version = isIP(hostname);
+  if (version === 4) return "ipv4";
+  if (version === 6) return "ipv6";
+  return null;
+};
+
+export const isLoopbackHost = host => {
+  const hostname = parseHostHeader(host);
+  if (!hostname) return false;
+  if (hostname === "localhost" || hostname === "localhost.localdomain") return true;
+  if (hostname.endsWith(".localhost")) return true;
+  const family = ipFamily(hostname);
+  return family ? loopbackNets.check(hostname, family) : false;
 };
 
 export const isTrustedCleartextHost = host => {
@@ -43,16 +72,30 @@ export const isTrustedCleartextHost = host => {
   if (!hostname) return false;
   if (hostname === "localhost" || hostname === "localhost.localdomain") return true;
   if (hostname.endsWith(".localhost") || hostname.endsWith(".local")) return true;
-  const version = isIP(hostname);
-  if (version === 4) return isPrivateOrLoopbackIPv4(hostname.split(".").map(Number));
-  if (version === 6) {
-    const mapped = hostname.startsWith("::ffff:") ? hostname.slice(7) : "";
-    if (mapped && isIP(mapped) === 4) return isPrivateOrLoopbackIPv4(mapped.split(".").map(Number));
-    if (hostname === "::1") return true;
-    if (hostname.startsWith("fe80:")) return true;
-    if (hostname.startsWith("fc") || hostname.startsWith("fd")) return true;
+  const family = ipFamily(hostname);
+  return family ? lanNets.check(hostname, family) : false;
+};
+
+export const isSafeId = value => typeof value === "string" && SAFE_ID.test(value);
+
+export const denyCleartextTransport = ({
+  hostHeader,
+  localAddress,
+  encrypted,
+  behindProxy,
+  allowCleartext,
+  loopbackBind: boundLoopback
+}) => {
+  if (encrypted) return false;
+  if (behindProxy) return true;
+  const host = parseHostHeader(hostHeader);
+  if (boundLoopback) return !isLoopbackHost(host || localAddress);
+  if (allowCleartext) {
+    if (!isTrustedCleartextHost(localAddress)) return true;
+    if (host && !isTrustedCleartextHost(host)) return true;
+    return false;
   }
-  return false;
+  return true;
 };
 
 const loopbackBind = () => ["127.0.0.1", "::1", "localhost"].includes(process.env.HOST ?? "127.0.0.1");
@@ -67,7 +110,7 @@ const allowRate = (key, limit, windowMs) => {
   rateBuckets.set(key, hits);
   if (rateBuckets.size > 8_000) {
     for (const [entry, times] of rateBuckets) {
-      const fresh = times.filter(time => now - time < windowMs);
+      const fresh = times.filter(time => now - time < RATE_MAX_WINDOW_MS);
       if (fresh.length) rateBuckets.set(entry, fresh);
       else rateBuckets.delete(entry);
     }
@@ -174,14 +217,30 @@ const body = (req, limit = 1_000_000) => new Promise((resolve, reject) => {
 });
 
 const bearer = req => req.headers.authorization?.match(/^Bearer ([A-Za-z0-9_-]+)$/)?.[1];
-const isLocalPeer = req => req.socket.remoteAddress === req.socket.localAddress;
+const isLocalPeer = req => isLoopbackHost(req.socket.remoteAddress) && isLoopbackHost(req.socket.localAddress);
 const pairingAuth = req => req.headers["x-pairing-auth"];
 const desktopProofHeader = req => req.headers["x-desktop-proof"];
+const hasForwardedHeaders = req => Boolean(
+  req.headers["x-forwarded-for"]
+  || req.headers["x-forwarded-proto"]
+  || req.headers["x-forwarded-host"]
+  || req.headers["x-real-ip"]
+);
 
-const denyPublicCleartext = req => {
-  if (requestIsEncrypted(req)) return false;
-  const host = parseHostHeader(req.headers.host) || (req.socket.localAddress ?? "");
-  return !isTrustedCleartextHost(host);
+const denyPublicCleartext = req => denyCleartextTransport({
+  hostHeader: req.headers.host,
+  localAddress: req.socket?.localAddress ?? "",
+  encrypted: requestIsEncrypted(req),
+  behindProxy: process.env.RELAY_BEHIND_PROXY === "1",
+  allowCleartext: process.env.RELAY_ALLOW_CLEARTEXT === "1",
+  loopbackBind: loopbackBind()
+});
+
+const recoverAllowed = req => {
+  if (process.env.RELAY_BEHIND_PROXY === "1" || process.env.RELAY_TRUST_PROXY === "1") return false;
+  if (!loopbackBind() || !isLocalPeer(req) || hasForwardedHeaders(req)) return false;
+  const host = parseHostHeader(req.headers.host);
+  return !host || isLoopbackHost(host);
 };
 
 const socketSet = (role, deviceId) => {
@@ -214,7 +273,7 @@ export const configureWebSockets = server => {
       const match = url.pathname.match(/^\/v1\/devices\/([^/]+)\/stream$/);
       const role = url.searchParams.get("role");
       const deviceId = match?.[1];
-      if (!deviceId || !["companion", "controller"].includes(role) || !store.authorized(deviceId, bearer(req))) {
+      if (!isSafeId(deviceId) || !["companion", "controller"].includes(role) || !store.authorized(deviceId, bearer(req))) {
         socket.write("HTTP/1.1 401 Unauthorized\r\nConnection: close\r\n\r\n");
         socket.destroy();
         return;
@@ -289,8 +348,13 @@ export const handler = async (req, res) => {
       if (!isP256PublicKey(value.phonePublicKey) || typeof value.phoneName !== "string" || !boundedText(value.phoneName.trim(), 1, 128)) return json(res, 400, { error: "Missing pairing data" });
       const authDigest = decodeBase64(value.authHash);
       if (!authDigest || authDigest.length !== 32) return json(res, 400, { error: "Missing pairing data" });
-      const p = store.createPairing(value.phonePublicKey, value.phoneName.trim(), value.authHash);
-      return json(res, 201, { sessionId: p.id, code: p.code, expiresAt: p.expiresAt });
+      try {
+        const p = store.createPairing(value.phonePublicKey, value.phoneName.trim(), value.authHash);
+        return json(res, 201, { sessionId: p.id, code: p.code, expiresAt: p.expiresAt });
+      } catch (error) {
+        if (error.message === "Too many pending pairings") return json(res, 429, { error: "Pairing request rate limited" });
+        throw error;
+      }
     }
 
     if (req.method === "GET" && parts[0] === "v1" && parts[1] === "pairings" && parts.length === 3) {
@@ -300,7 +364,7 @@ export const handler = async (req, res) => {
       return p ? json(res, 200, p) : json(res, 404, { error: "Pairing not found or expired" });
     }
 
-    if (req.method === "PUT" && parts[0] === "v1" && parts[1] === "pairings" && parts[3] === "claim") {
+    if (req.method === "PUT" && parts[0] === "v1" && parts[1] === "pairings" && parts[3] === "claim" && parts.length === 4) {
       if (!allowRate(`claim:${clientKey(req)}`, 10, 10 * 60_000)) return json(res, 429, { error: "Pairing claim rate limited" });
       const value = await body(req, 16_384);
       if (!/^\d{6}$/.test(parts[2]) || !hasOnlyKeys(value, ["desktopPublicKey", "desktopProof", "device"])) {
@@ -309,7 +373,7 @@ export const handler = async (req, res) => {
       if (!isP256PublicKey(value.desktopPublicKey) || !boundedText(value.desktopProof, 32, 128)) return json(res, 400, { error: "Invalid desktop pairing data" });
       const device = value.device;
       if (!hasOnlyKeys(device, ["id", "name", "platform", "osVersion", "codexVersion", "onlineState", "lastSeenAt"])
-        || !boundedText(device.id, 1, 128) || !boundedText(device.name, 1, 128)) {
+        || !isSafeId(device.id) || !boundedText(device.name, 1, 128)) {
         return json(res, 400, { error: "Invalid desktop pairing data" });
       }
       try {
@@ -321,7 +385,7 @@ export const handler = async (req, res) => {
       }
     }
 
-    if (req.method === "GET" && parts[0] === "v1" && parts[1] === "pairings" && parts[3] === "status") {
+    if (req.method === "GET" && parts[0] === "v1" && parts[1] === "pairings" && parts[3] === "status" && parts.length === 4) {
       if (!allowRate(`status:${clientKey(req)}`, 180, 10 * 60_000)) return json(res, 429, { error: "Pairing lookup rate limited" });
       const session = store.byId(parts[2]);
       if (!session) return json(res, 404, { error: "Pairing not found or expired" });
@@ -330,7 +394,7 @@ export const handler = async (req, res) => {
       return json(res, 401, { error: "Unauthorized" });
     }
 
-    if (req.method === "PUT" && parts[0] === "v1" && parts[1] === "pairings" && parts[3] === "confirm") {
+    if (req.method === "PUT" && parts[0] === "v1" && parts[1] === "pairings" && parts[3] === "confirm" && parts.length === 4) {
       if (!allowRate(`confirm:${clientKey(req)}`, 20, 10 * 60_000)) return json(res, 429, { error: "Pairing confirm rate limited" });
       const session = store.byId(parts[2]);
       if (!session) return json(res, 404, { error: "Pairing not found or expired" });
@@ -341,16 +405,18 @@ export const handler = async (req, res) => {
       return p ? json(res, 200, p) : json(res, 409, { error: "Invalid pairing state" });
     }
 
-    if (req.method === "PUT" && parts[0] === "v1" && parts[1] === "devices" && parts[3] === "recover") {
-      if (!loopbackBind() || !isLocalPeer(req)) return json(res, 403, { error: "Pairing recovery is allowed only from this desktop" });
+    if (req.method === "PUT" && parts[0] === "v1" && parts[1] === "devices" && parts[3] === "recover" && parts.length === 4) {
+      if (!recoverAllowed(req)) return json(res, 403, { error: "Pairing recovery is allowed only from this desktop" });
+      if (!allowRate(`recover:${clientKey(req)}`, 10, 10 * 60_000)) return json(res, 429, { error: "Too many requests" });
+      if (!isSafeId(parts[2])) return json(res, 400, { error: "Invalid recovery data" });
       const value = await body(req, 4_096);
       if (!hasOnlyKeys(value, ["token"]) || !boundedText(value.token, 20, 256)) return json(res, 400, { error: "Invalid recovery data" });
       return store.recoverDevice(parts[2], value.token) ? json(res, 201, { ok: true }) : json(res, 409, { error: "Device already exists or recovery data is invalid" });
     }
 
-    if (parts[0] === "v1" && parts[1] === "devices" && parts[3] === "snapshot") {
+    if (parts[0] === "v1" && parts[1] === "devices" && parts[3] === "snapshot" && parts.length === 4) {
       const deviceId = parts[2];
-      if (!store.authorized(deviceId, bearer(req))) return json(res, 401, { error: "Unauthorized" });
+      if (!isSafeId(deviceId) || !store.authorized(deviceId, bearer(req))) return json(res, 401, { error: "Unauthorized" });
       if (!deviceRate(req, deviceId)) return json(res, 429, { error: "Too many requests" });
       if (req.method === "PUT") {
         const value = await body(req);
@@ -363,16 +429,16 @@ export const handler = async (req, res) => {
       if (req.method === "GET") { const value = store.snapshot(deviceId); return value ? json(res, 200, value) : json(res, 404, { error: "No snapshot" }); }
     }
 
-    if (req.method === "GET" && parts[0] === "v1" && parts[1] === "devices" && parts[3] === "presence") {
+    if (req.method === "GET" && parts[0] === "v1" && parts[1] === "devices" && parts[3] === "presence" && parts.length === 4) {
       const deviceId = parts[2];
-      if (!store.authorized(deviceId, bearer(req))) return json(res, 401, { error: "Unauthorized" });
+      if (!isSafeId(deviceId) || !store.authorized(deviceId, bearer(req))) return json(res, 401, { error: "Unauthorized" });
       if (!deviceRate(req, deviceId)) return json(res, 429, { error: "Too many requests" });
       return json(res, 200, store.presence(deviceId));
     }
 
-    if (parts[0] === "v1" && parts[1] === "devices" && parts[3] === "commands") {
+    if (parts[0] === "v1" && parts[1] === "devices" && parts[3] === "commands" && (parts.length === 4 || parts.length === 6)) {
       const deviceId = parts[2];
-      if (!store.authorized(deviceId, bearer(req))) return json(res, 401, { error: "Unauthorized" });
+      if (!isSafeId(deviceId) || !store.authorized(deviceId, bearer(req))) return json(res, 401, { error: "Unauthorized" });
       if (!deviceRate(req, deviceId)) return json(res, 429, { error: "Too many requests" });
       if (req.method === "POST" && parts.length === 4) {
         const value = await body(req);
@@ -380,7 +446,7 @@ export const handler = async (req, res) => {
           return json(res, 400, { error: "Remote commands must be end-to-end encrypted" });
         }
         if (!hasOnlyKeys(value, ["id", "kind", "expiresAt", "envelope"])
-          || !boundedText(value.id, 1, 128) || !boundedText(value.kind, 1, 64)
+          || !isSafeId(value.id) || !boundedText(value.kind, 1, 64)
           || typeof value.expiresAt !== "string" || !isEnvelope(value.envelope)) {
           return json(res, 400, { error: "Invalid remote command envelope" });
         }
@@ -394,12 +460,14 @@ export const handler = async (req, res) => {
         return json(res, 202, {});
       }
       if (req.method === "GET" && parts.length === 4) return json(res, 200, { commands: store.commands(deviceId) });
-      if (req.method === "POST" && parts[4] && parts[5] === "ack") return store.acknowledgeCommand(deviceId, parts[4]) ? json(res, 204, {}) : json(res, 404, { error: "Command not found" });
+      if (req.method === "POST" && parts.length === 6 && isSafeId(parts[4]) && parts[5] === "ack") {
+        return store.acknowledgeCommand(deviceId, parts[4]) ? json(res, 204, {}) : json(res, 404, { error: "Command not found" });
+      }
     }
 
-    if (parts[0] === "v1" && parts[1] === "devices" && parts[3] === "events") {
+    if (parts[0] === "v1" && parts[1] === "devices" && parts[3] === "events" && parts.length === 4) {
       const deviceId = parts[2];
-      if (!store.authorized(deviceId, bearer(req))) return json(res, 401, { error: "Unauthorized" });
+      if (!isSafeId(deviceId) || !store.authorized(deviceId, bearer(req))) return json(res, 401, { error: "Unauthorized" });
       if (!deviceRate(req, deviceId)) return json(res, 429, { error: "Too many requests" });
       if (req.method === "POST") {
         const value = await body(req);
@@ -407,7 +475,7 @@ export const handler = async (req, res) => {
           return json(res, 400, { error: "Remote events must be end-to-end encrypted" });
         }
         if (!hasOnlyKeys(value, ["accountFingerprint", "threadId", "envelope"])
-          || !boundedText(value.accountFingerprint, 1, 128) || !boundedText(value.threadId, 1, 128)
+          || !isSafeId(value.accountFingerprint) || !boundedText(value.threadId, 1, 128)
           || !isEnvelope(value.envelope)) {
           return json(res, 400, { error: "Invalid event envelope" });
         }
@@ -455,6 +523,9 @@ if (isMain) {
   if (!loopbackBind() && !tls && !process.env.RELAY_ORIGIN && process.env.RELAY_ALLOW_CLEARTEXT !== "1") {
     process.stderr.write("Quota Pool relay: set RELAY_ORIGIN for non-loopback deployments.\n");
     process.exit(1);
+  }
+  if (process.env.RELAY_BEHIND_PROXY === "1" && !loopbackBind()) {
+    process.stderr.write("Warning: RELAY_BEHIND_PROXY without a loopback bind. Do not publish the relay port; only the TLS proxy should reach it.\n");
   }
   const server = tls
     ? https.createServer({ cert: fs.readFileSync(certPath), key: fs.readFileSync(keyPath), minVersion: "TLSv1.2" }, handler)

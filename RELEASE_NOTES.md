@@ -1,19 +1,19 @@
-# Quota Pool v0.1.0
+# Quota Pool v0.2.0
 
-The first tagged GitHub release of Quota Pool, a personal, self-hosted console for Codex workflows across paired Mac, Windows, and iPhone environments.
+Security hardening for the self-hosted relay and client URL policy. OpenAI credentials still stay on the host running the local Codex App Server. Snapshots, remote commands, and Remote Session bodies remain end-to-end encrypted with the pairing key.
 
-## Highlights
+## Security fixes
 
-- Unified monitoring for Codex account state, 5-hour and weekly quota windows, reset timing, token usage, and recent activity.
-- Cross-device session visibility with macOS and Windows companion apps plus an iOS client.
-- Remote Session support for reading and resuming existing Codex threads, starting turns, steering or interrupting Quota Pool-owned turns, and responding to approval requests.
-- Encrypted device pairing and relay transport designed to keep OpenAI credentials on the host running the local Codex App Server.
-- Self-hostable relay with HTTPS/WSS requirements for public deployments.
-- Security-focused repository setup including Gitleaks and TruffleHog full-history scanning.
-- Explicit capability boundaries: Quota Pool does not combine quotas, automatically rotate accounts to evade usage limits, resell subscriptions, or expose subscriptions as an API.
+- The relay no longer treats a spoofed `Host: 127.0.0.1` (or other private-looking Host header) as proof that a public cleartext connection is local. Loopback binds still reject DNS-rebinding Host headers. LAN cleartext requires both the bound address and Host to be trusted. Reverse-proxy backends reject direct cleartext unless `X-Forwarded-Proto: https` is present.
+- Pairing recovery (`/v1/devices/:id/recover`) is limited to the local loopback desktop. Forwarded headers, `RELAY_BEHIND_PROXY`, and `RELAY_TRUST_PROXY` disable it. Public deployments should persist ciphertext with `RELAY_STATE_PATH` instead of exposing recovery.
+- IPv6 unique-local matching no longer treats every address whose text starts with `fc` or `fd` as private. Clients and the relay now use prefix `fc00::/7` (and mapped IPv4 where applicable).
+- Device identifiers are restricted to a safe character set so they cannot smuggle extra path segments. Command list responses no longer include internal routing fields.
+- Pending pairing sessions are capped, recovery is rate-limited, and rate-limit cleanup no longer evicts longer pairing windows early.
+- The relay container runs as the non-root `node` user.
 
-## Licensing
+## Compatibility
 
-Starting with v0.1.0, Quota Pool is open-source software licensed under the GNU Affero General Public License v3.0 (`AGPL-3.0-only`). Commercial use is permitted under the AGPL when its terms are followed. Separate commercial licensing is available for organizations that need proprietary terms incompatible with the AGPL.
+- Pairing, snapshot sync, and Remote Session behavior are unchanged for a local `http://127.0.0.1` relay and for HTTPS public relays.
+- A companion that relied on recovery after a public relay lost in-memory state should set `RELAY_STATE_PATH` or re-pair.
 
-See `README.md`, `LICENSE`, `COMMERCIAL-LICENSE.md`, `PRIVACY.md`, and `SECURITY.md` for details.
+See `SECURITY.md` and `relay/.env.example` for deployment requirements.

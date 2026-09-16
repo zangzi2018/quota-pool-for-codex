@@ -26,6 +26,7 @@ export class RelayStore {
 
   createPairing(phonePublicKey, phoneName, authHash) {
     this.cleanup();
+    if (this.pairingsById.size >= 2_000) throw new Error("Too many pending pairings");
     const authDigest = Buffer.from(authHash, "base64");
     if (authDigest.length !== 32) throw new Error("Invalid pairing credential");
     let code;
@@ -189,7 +190,9 @@ export class RelayStore {
 
   commands(deviceId) {
     this.cleanup();
-    return [...this.pendingCommands.values()].filter(value => value.targetDeviceId === deviceId && value.status === "pending").map(value => structuredClone(value));
+    return [...this.pendingCommands.values()]
+      .filter(value => value.targetDeviceId === deviceId && value.status === "pending")
+      .map(({ id, kind, expiresAt, envelope }) => structuredClone({ id, kind, expiresAt, envelope }));
   }
 
   acknowledgeCommand(deviceId, commandId) {

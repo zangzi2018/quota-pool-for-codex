@@ -7,7 +7,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { RelayStore } from "../src/store.mjs";
 import http from "node:http";
 import { createRequire } from "node:module";
-import { configureWebSockets, handler } from "../src/server.mjs";
+import { configureWebSockets, denyCleartextTransport, handler, isLoopbackHost, isSafeId, isTrustedCleartextHost } from "../src/server.mjs";
 
 const { WebSocket } = createRequire(import.meta.url)("../vendor/ws/index.js");
 
@@ -267,5 +267,91 @@ test("responses include no-store security headers and reject public cleartext Ho
       req.end(JSON.stringify({ phonePublicKey: p256(1), phoneName: "iPhone", authHash: pairingSecret().authHash }));
     });
     assert.equal(denied, 400);
+  } finally { server.close(); }
+});
+
+test("cleartext policy uses the bound address, not a spoofed Host header", () => {
+  assert.equal(isTrustedCleartextHost("127.0.0.1"), true);
+  assert.equal(isTrustedCleartextHost("127.0.0.1:8787"), true);
+  assert.equal(isTrustedCleartextHost("[fc00::1]:8787"), true);
+  assert.equal(isTrustedCleartextHost("fc00::1"), true);
+  assert.equal(isTrustedCleartextHost("fd12:3456::1"), true);
+  assert.equal(isTrustedCleartextHost("fe80::1"), true);
+  assert.equal(isTrustedCleartextHost("fc::"), false);
+  assert.equal(isTrustedCleartextHost("2001:4860:4860::8888"), false);
+  assert.equal(isTrustedCleartextHost("::ffff:8.8.8.8"), false);
+  assert.equal(isTrustedCleartextHost("::ffff:192.168.1.8"), true);
+  assert.equal(isLoopbackHost("127.0.0.1"), true);
+  assert.equal(isLoopbackHost("192.168.1.8"), false);
+  assert.equal(isSafeId("mac-1"), true);
+  assert.equal(isSafeId("mac/../etc"), false);
+  assert.equal(denyCleartextTransport({
+    hostHeader: "127.0.0.1",
+    localAddress: "203.0.113.10",
+    encrypted: false,
+    behindProxy: false,
+    allowCleartext: true,
+    loopbackBind: false
+  }), true, "public bind must not trust a loopback Host header");
+  assert.equal(denyCleartextTransport({
+    hostHeader: "example.com",
+    localAddress: "127.0.0.1",
+    encrypted: false,
+    behindProxy: false,
+    allowCleartext: false,
+    loopbackBind: true
+  }), true, "loopback bind must reject DNS-rebinding Host headers");
+  assert.equal(denyCleartextTransport({
+    hostHeader: "relay.example.com",
+    localAddress: "127.0.0.1",
+    encrypted: false,
+    behindProxy: true,
+    allowCleartext: false,
+    loopbackBind: true
+  }), true, "proxy backends must not accept cleartext without X-Forwarded-Proto");
+  assert.equal(denyCleartextTransport({
+    hostHeader: "relay.example.com",
+    localAddress: "127.0.0.1",
+    encrypted: true,
+    behindProxy: true,
+    allowCleartext: false,
+    loopbackBind: true
+  }), false);
+});
+
+test("pairing recovery is not available through forwarded or proxied requests", async () => {
+  const { server, origin } = await startRelay();
+  const token = "existing-device-token-that-stays-in-keychain";
+  const previousProxy = process.env.RELAY_BEHIND_PROXY;
+  try {
+    const forwarded = await request(origin, "/v1/devices/mac-recover-proxy/recover", "PUT", { token }, undefined, {
+      "x-forwarded-for": "203.0.113.10"
+    });
+    assert.equal(forwarded.status, 403);
+    process.env.RELAY_BEHIND_PROXY = "1";
+    const proxied = await request(origin, "/v1/devices/mac-recover-proxy/recover", "PUT", { token }, undefined, {
+      "x-forwarded-proto": "https"
+    });
+    assert.equal(proxied.status, 403);
+  } finally {
+    if (previousProxy === undefined) delete process.env.RELAY_BEHIND_PROXY;
+    else process.env.RELAY_BEHIND_PROXY = previousProxy;
+    server.close();
+  }
+});
+
+test("device identifiers cannot smuggle extra path segments", async () => {
+  const { server, origin } = await startRelay();
+  const secret = pairingSecret();
+  try {
+    const created = await request(origin, "/v1/pairings", "POST", { phonePublicKey: p256(1), phoneName: "iPhone", authHash: secret.authHash });
+    const claimed = await request(origin, `/v1/pairings/${created.body.code}/claim`, "PUT", {
+      desktopPublicKey: p256(2),
+      desktopProof: "desktop-proof-placeholder-with-enough-length",
+      device: { id: "mac/../etc", name: "Mac" }
+    });
+    assert.equal(claimed.status, 400);
+    const extra = await request(origin, "/v1/devices/mac-1/snapshot/extra");
+    assert.equal(extra.status, 404);
   } finally { server.close(); }
 });

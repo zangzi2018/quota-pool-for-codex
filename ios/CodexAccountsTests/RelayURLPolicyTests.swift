@@ -17,7 +17,11 @@ final class RelayURLPolicyTests: XCTestCase {
         }
         XCTAssertThrowsError(try RelayURLPolicy.parse("http://8.8.8.8"))
         XCTAssertThrowsError(try RelayURLPolicy.parse("http://fc.invalid"))
+        XCTAssertThrowsError(try RelayURLPolicy.parse("http://[fc::]"))
+        XCTAssertThrowsError(try RelayURLPolicy.parse("http://[::ffff:8.8.8.8]"))
         XCTAssertThrowsError(try RelayURLPolicy.parse("ftp://127.0.0.1"))
+        XCTAssertTrue(try RelayURLPolicy.parse("http://[fc00::1]").usesCleartext)
+        XCTAssertTrue(try RelayURLPolicy.parse("http://[::ffff:192.168.1.8]").usesCleartext)
 
         // Build this at runtime so secret scanners do not mistake an intentional
         // credential-in-URL validation fixture for a committed live credential.
