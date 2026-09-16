@@ -4,7 +4,7 @@ This file describes safe and compatible ways to operate Quota Pool with third-pa
 
 ## License scope
 
-The source code is provided under PolyForm Noncommercial 1.0.0. Commercial use requires separate written permission from the copyright holder; see [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md).
+The project is open-source software licensed under the GNU Affero General Public License v3.0 (`AGPL-3.0-only`). Commercial use is permitted when the AGPL terms are followed. A separate commercial license is available for organizations that need proprietary terms incompatible with the AGPL; see [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md).
 
 ## OpenAI / Codex accounts
 
